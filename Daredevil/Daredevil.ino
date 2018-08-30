@@ -2,25 +2,25 @@
 #include <Servo.h>
 #include <NewPing.h>
 
-Servo hombro1;
-Servo hombro2;
-Servo hombro11;//3
-Servo hombro12;//4
+Servo hombro1;//+deg
+Servo hombro2;//+deg
+Servo hombro11;//3//+deg
+Servo hombro12;//4//+deg
 
-Servo muslo1;
-Servo muslo2;
-Servo muslo11;
-Servo muslo12;
+Servo muslo1;//+deg
+Servo muslo2;//+deg
+Servo muslo11;//+deg
+Servo muslo12;//+deg
 
-Servo pierna1;
-Servo pierna2;
-Servo pierna11;
-Servo pierna12;
+Servo pierna1; //+deg sube
+Servo pierna2; //+deg sube
+Servo pierna11; //+deg baja
+Servo pierna12; //+deg sube
 
-Servo leg1[] = {hombro1,muslo1,pierna1};
-Servo leg2[] = {hombro2,muslo2,pierna2};
-Servo leg3[] = {hombro11,muslo11,pierna11};
-Servo leg4[] = {hombro12,muslo12,pierna12};
+Servo leg1[] = {hombro1,muslo1,pierna1}; //ADELANTE DERECHA
+Servo leg2[] = {hombro2,muslo2,pierna2}; //ADELANTE IZQUIERDA
+Servo leg3[] = {hombro11,muslo11,pierna11};//ATRAS IZQUIERDA
+Servo leg4[] = {hombro12,muslo12,pierna12};//ATRAS DERECHA más corta
 
 
 //!!!
@@ -39,15 +39,15 @@ int pos_h2_A  = 90;//al revez :c
 int pos_h11_A = 90;
 int pos_h12_A = 90;
 //Muslos
-int pos_M1_A  = 140;//140
+int pos_M1_A  = 100;//140
 int pos_M2_A  = 100;
 int pos_M11_A = 100;
 int pos_M12_A = 100;
 //Pie
 int pos_P1_A  = 15;
-int pos_P2_A  = 15;
-int pos_P11_A = 165;//al revez
-int pos_P12_A = 15;
+int pos_P2_A  = 25;
+int pos_P11_A = 160;//al revez
+int pos_P12_A = 20;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
  Serial.begin (9600) ;// iniciar comunicacion serial
@@ -95,13 +95,13 @@ void Mov_servo(Servo motor,int grados){
   if(pos_ini<pos_fin){
     for(int pos= pos_ini; pos<=pos_fin; pos +=1){
       motor.write(pos);
-      delay(30);
+      delay(7);
     }
   }
   else if(pos_ini > pos_fin){
     for(int pos= pos_ini; pos>=pos_fin; pos -=1){
       motor.write(pos);
-      delay(20);
+      delay(7);
     }
   }
 }
@@ -111,7 +111,7 @@ void Mov_multi_motors(Servo motor[],int grados[]){
   //int pos_ini [n]={};
   //int pos_fin [n]={};
   int points = 10;
-  int deltas [points]={};
+  int deltas [n]={};
   //int traj [n][points];
   for(int m=0;m<n;m++){
     //pos_ini[m]=motor[m].read();
@@ -119,8 +119,8 @@ void Mov_multi_motors(Servo motor[],int grados[]){
     deltas[m]= grados[m]/points;
   }
 
-  for(int m=0;m<n;m++){
-    for(int p=0;p<points;p++){
+  for(int p=0;p<points;p++){
+    for(int m=0;m<n;m++){
       Mov_servo(motor[m],deltas[m]);
     }
   }
@@ -310,9 +310,56 @@ void Cosas(){
   delay(1000);
 }
 
+
+void turn_left(int steps){
+
+  for(int i=0;i<steps;i++){
+
+    Servo Servos[] = {pierna1,pierna11};
+    int grados[] = {30,-30};
+    Mov_multi_motors(Servos,grados);
+    grados[0]=-30;grados[1]=30;
+    Mov_multi_motors(Servos,grados);
+    
+//    Servo Servos[] = {muslo1,pierna1,muslo11,pierna11};
+//    int grados[] = {20,30,20,-30};
+//    Mov_multi_motors(Servos,grados);
+//    grados[0]=-20;grados[1]=-30;grados[2]=-20;grados[3]=30;
+//    Mov_multi_motors(Servos,grados);
+  }
+
+  
+//  int c = 0;
+//  // Si grados es mayor que delta_grados, se generaran rotaciones pequeñas 
+//  // de magnitud delta_grados cada una para no girar bruscamente.
+//  while(grados > delta_grados){
+//  Mov_2_leg(leg1,delta_grados,leg3,delta_grados);
+//  delay(1000);
+//  ajustar_pos_base();
+//  Mov_2_leg(leg2,delta_grados,leg4,delta_grados);
+//  delay(1000);
+//  ajustar_pos_base();
+//  //!!!!!!
+//  delay(1000);
+//  c +=1;
+//  grados -= delta_grados;}
+//  
+//  //luego se realiza una rotacion final para rotar la cantidad exacta de grados
+//  //requeridos                                                                                                                             
+//  Mov_2_leg(leg1,grados,leg3,grados);
+//  Mov_2_leg(leg2,grados,leg4,-grados);
+//  ajustar_pos_base();
+}
+
+
+
 void loop(){
   delay(5000);
-  Mov_servo(pierna1,30);
+  turn_left(3);
+  //Servo Servos[] = {pierna1,pierna2};
+  //int grados[] = {30,30};
+  //Mov_multi_motors(Servos,grados);
+  //Mov_servo(pierna12,30);
   //Girar(30,15);
   while(1){
     
